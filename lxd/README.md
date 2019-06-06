@@ -20,9 +20,9 @@ lxc exec simple-streams -- tail -f /var/log/cloud-init-output.log
 
 #### Import Certificate
 ```sh
-mkdir /usr/local/share/ca-certificates/proxy
-wget -P /usr/local/share/ca-certificates/proxy/ https://lxd.mirror.mini-stack.maas/lxd-mirror-ca.crt
-chmod 644 /usr/local/share/ca-certificates/proxy/lxd-mirror-ca.crt
+mkdir /usr/local/share/ca-certificates/mirror
+wget -P /usr/local/share/ca-certificates/mirror/ https://lxd.mirror.mini-stack.maas/lxd-mirror-ca.crt
+chmod 644 /usr/local/share/ca-certificates/mirror/lxd-mirror-ca.crt
 update-ca-certificates
 ```
 #### Import Mirror
