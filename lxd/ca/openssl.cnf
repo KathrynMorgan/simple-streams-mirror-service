@@ -1,0 +1,119 @@
+# ORIGIN = /etc/ssl/openssl.cnf
+HOME			= /root/ca/
+RANDFILE		= $ENV::HOME/ca/.rnd
+oid_section		= new_oids
+
+[ new_oids ]
+
+####################################################################
+[ ca ]
+default_ca	= mini-stack.maas		# The default ca section
+
+####################################################################
+[ mini-stack.maas ]
+
+dir		= /root/ca/mini-stack.maas/             # Where everything is kept.
+certs		= $dir/issued_certificates		# Where the issued certs are kept.
+crl_dir		= $dir/crl                              # Where the issued crl are kept.
+database	= $dir/index.attr                       # Database index file.
+unique_subject	= no                                    # !Dangerous!
+new_certs_dir	= $dir/issued                           # Default place for new certs.
+certificate	= $dir/root/mini-stack.maas_CA_PubCertificate.crt	# The CA certificate
+serial		= $dir/serial                           # The current serial number
+crl		= $dir/root/crl.pem                     # The current CRL
+private_key	= $dir/root/private/mini-stack.maas_CA_PrivateKey.crt   # The private key
+RANDFILE	= $dir/root/private/.rand               # Private random number file
+x509_extensions	= usr_cert                              # The extentions to add to the cert
+
+name_opt                = ca_default                    # Subject Name options
+cert_opt                = ca_default                    # Certificate field options
+
+default_bits            = 4086
+default_md              = sha256        # which md to use.
+default_days            = 365		# how long to certify for
+default_crl_days        = 30		# how long before next CRL
+preserve                = no		# keep passed DN ordering
+policy                  = policy_match
+
+# For the CA policy
+[ policy_match ]
+countryName		= match
+stateOrProvinceName	= match
+organizationName	= match
+commonName		= supplied
+organizationalUnitName	= match
+emailAddress		= match 
+
+[ policy_anything ]
+commonName		= supplied
+countryName		= optional
+stateOrProvinceName	= optional
+localityName		= optional
+organizationName	= optional
+organizationalUnitName	= optional
+emailAddress		= optional
+
+####################################################################
+[ req ]
+default_bits		= 4086
+default_keyfile 	= private_key.pem
+distinguished_name	= req_distinguished_name
+attributes		= req_attributes
+string_mask		= nombstr
+x509_extensions         = v3_ca	# The extentions to add to the self signed cert
+
+# Passwords for private keys if not present they will be prompted for
+input_password = capwd   ## DANGEROUS PWD EXPOSURE | Lab Use Only
+output_password = capwd  ## DANGEROUS PWD EXPOSURE | Lab Use Only
+
+
+# req_extensions = v3_req # The extensions to add to a certificate request
+[ req_distinguished_name ]
+ countryName			= Country Name (2 letter code)
+ countryName_min		= 2
+ countryName_max		= 2
+ stateOrProvinceName		= State or Province Name (full name)
+ localityName			= Locality Name (eg, city)
+ 0.organizationName		= Organization Name (eg, company)
+ organizationalUnitName	= Organizational Unit Name (eg, section)
+ commonName			= Common Name (eg: fqdn)
+ commonName_max		= 64
+ emailAddress			= Email Address
+ emailAddress_max		= 64
+
+  0.organizationName_default	= mini-stack.maas
+  organizationalUnitName_default = MSMAAS_PROXY CertAuthority
+  stateOrProvinceName_default	= Hawaii
+  localityName_default		= Kamuela
+  countryName_default		= US
+  commonName_default		= MSMAAS Services
+  emailAddress_default		= admin@mini-stack.maas
+
+# SET-ex3			= SET extension number 3
+[ req_attributes ]
+  challengePassword		= A challenge password
+  challengePassword_min		= 4
+  challengePassword_max		= 20
+  unstructuredName		= An optional company name
+
+# These extensions are added when 'ca' signs a request.
+[ usr_cert ]
+  basicConstraints=CA:FALSE
+  nsComment			= "MSMAAS CertAuthority OpenSSL Generated Certificate"
+  subjectKeyIdentifier=hash
+  authorityKeyIdentifier=keyid,root:always
+
+# Extensions to add to a certificate request
+[ v3_req ]
+  basicConstraints = CA:FALSE
+  keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+# Extensions for a typical CA
+[ v3_ca ]
+  subjectKeyIdentifier=hash
+  authorityKeyIdentifier=keyid:always,issuer
+  basicConstraints = critical,CA:true
+
+# CRL extensions.
+[ crl_ext ]
+  authorityKeyIdentifier=keyid:always,root:always

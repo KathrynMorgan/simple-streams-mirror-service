@@ -1,0 +1,59 @@
+#!/bin/bash
+clear
+
+CA="mini-stack.maas"
+PREFIX=/root/ca
+CONFIG=${PREFIX}/openssl.cnf
+CA_DIR=${PREFIX}/${CA}
+
+# PURGE
+rm -rf ${CA_DIR}
+
+##
+## Initialize
+##
+
+# Create directories
+[[ -d ${CA_DIR} ]] || mkdir ${CA_DIR}
+mkdir /root/certs 2>/dev/null
+mkdir ${PREFIX}/signing_requests 2>/dev/null
+mkdir ${CA_DIR}/crl 2>/dev/null
+mkdir ${CA_DIR}/issued 2>/dev/null
+mkdir ${CA_DIR}/root 2>/dev/null
+mkdir ${CA_DIR}/root/private 2>/dev/null
+mkdir ${CA_DIR}/provisioned_clients 2>/dev/null
+touch ${CA_DIR}/serial 2>/dev/null
+touch ${CA_DIR}/index.attr 2>/dev/null
+touch ${PREFIX}/.rnd
+ln -f ${CA_DIR}/index.attr ${CA_DIR}/index.attr.attr
+
+##
+## CA
+##
+
+# Create a new CA certificate and private key
+openssl req -config ${CONFIG}			\
+	-new					\
+	-batch \
+	-x509					\
+	-keyout ${CA_DIR}/root/private/${CA}_CA_PrivateKey.crt    \
+        -out ${CA_DIR}/root/${CA}_CA_PubCertificate.crt    \
+        -days 730				\
+        -passout pass:capwd
+
+# Create CA certificate serial number
+openssl x509 					\
+	-in ${CA_DIR}/root/${CA}_CA_PubCertificate.crt \
+	-noout					\
+	-next_serial				\
+	-out ${CA_DIR}/serial
+
+# Create Unencrypted CA Key
+openssl rsa \
+	-in ${CA_DIR}/root/private/${CA}_CA_PrivateKey.crt    \
+	-out ${CA_DIR}/root/private/${CA}_CA_PrivateKey-unencrypted.crt \
+        -passin pass:capwd
+
+ln -f ${CA_DIR}/root/${CA}_CA_PubCertificate.crt /root/certs/squid-ca.crt
+ln -f ${CA_DIR}/root/private/${CA}_CA_PrivateKey-unencrypted.crt /root/certs/squid-key.crt
+
