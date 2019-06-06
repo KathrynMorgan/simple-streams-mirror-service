@@ -13,6 +13,7 @@ lxc exec simple-streams -- tail -f /var/log/cloud-init-output.log
 
 #### Sync Images:
 ```sh
+lxc exec simple-streams -- /bin/bash -c "sudo sstream-mirror --keyring=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg https://cloud-images.ubuntu.com/releases/ /var/www/html/cloud-images/ 'arch=amd64' 'release~(trusty|xenial|bionic)' --max=1 --progress"
 ```
 
 ## Configure LXD Client:
