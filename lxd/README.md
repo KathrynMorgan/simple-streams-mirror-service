@@ -16,16 +16,20 @@ lxc exec simple-streams -- tail -f /var/log/cloud-init-output.log
 ```
 
 ## Configure LXD Client:
+#### NOTE: Create DNS record for 'lxd.mirror.mini-stack.maas' or manual 'hosts' entry
+
 #### Import Certificate
 ```sh
 mkdir /usr/local/share/ca-certificates/proxy
-wget -P /usr/local/share/ca-certificates/proxy/ http://10.10.0.52:8080/squid-ca.crt
-chmod 644 /usr/local/share/ca-certificates/proxy/squid-ca.crt
+wget -P /usr/local/share/ca-certificates/proxy/ https://lxd.mirror.mini-stack.maas/lxd-mirror-ca.crt
+chmod 644 /usr/local/share/ca-certificates/proxy/lxd-mirror-ca.crt
 update-ca-certificates
 ```
 #### Import Mirror
 ```sh
+lxc remote add mirror https://lxd.mirror.mini-stack.maas/lxd-mirror-ca.crt --protocol=simplestreams
 ```
 #### Launch Image
 ```sh
+lxc launch mirror:bionic mirror-test
 ```
