@@ -1,8 +1,14 @@
 ## Simple Streams LXD Image Server
 #### NOTICE: Container built with hard-coded host/domain/tld & IP configs for [CCIO Mini-Stack](https://github.com/containercraft/mini-stack)    
 
-#### Run the build script:
+#### Create the Container Profile
 ```sh
+wget -O- https://gitlab.com/kat.morgan/simple-streams-mirror-build/raw/master/lxd/aux/bin/profile-build-lxd-simple-streams.sh | bash
+```
+#### Create the Container
+```sh
+lxc launch ubuntu:bionic simple-streams -p simple-streams
+lxc exec simple-streams -- tail -f /var/log/cloud-init-output.log
 ```
 
 #### Sync Images:
