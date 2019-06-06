@@ -56,5 +56,5 @@ openssl rsa \
 
 ln -f ${CA_DIR}/root/${CA}_CA_PubCertificate.crt /root/certs/lxd-mirror-ca.crt
 ln -f ${CA_DIR}/root/private/${CA}_CA_PrivateKey-unencrypted.crt /root/certs/lxd-mirror-key.crt
-ln -f ${CA_DIR}/root/${CA}_CA_PubCertificate.crt /var/www/html/cloud-images/lxd-mirror-ca.crt
+ln -f /root/certs/lxd-mirror-ca.crt /var/www/html/cloud-images/lxd-mirror-ca.crt
 chmod 755 /var/www/html/cloud-images/lxd-mirror-ca.crt
