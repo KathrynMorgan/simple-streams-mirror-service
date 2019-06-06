@@ -1,8 +1,8 @@
 #!/bin/bash
 clear
 
-CA="mini-stack.maas"
-PREFIX=/root/ca
+CA="lxd.mirror.mini-stack.maas"
+PREFIX=/root/certs
 CONFIG=${PREFIX}/openssl.cnf
 CA_DIR=${PREFIX}/${CA}
 
@@ -54,6 +54,7 @@ openssl rsa \
 	-out ${CA_DIR}/root/private/${CA}_CA_PrivateKey-unencrypted.crt \
         -passin pass:capwd
 
-ln -f ${CA_DIR}/root/${CA}_CA_PubCertificate.crt /root/certs/squid-ca.crt
-ln -f ${CA_DIR}/root/private/${CA}_CA_PrivateKey-unencrypted.crt /root/certs/squid-key.crt
-
+ln -f ${CA_DIR}/root/${CA}_CA_PubCertificate.crt /root/certs/lxd-mirror-ca.crt
+ln -f ${CA_DIR}/root/private/${CA}_CA_PrivateKey-unencrypted.crt /root/certs/lxd-mirror-key.crt
+ln -f ${CA_DIR}/root/${CA}_CA_PubCertificate.crt /var/www/html/cloud-images/lxd-mirror-ca.crt
+chmod 755 /var/www/html/cloud-images/lxd-mirror-ca.crt

@@ -1,27 +1,27 @@
 # ORIGIN = /etc/ssl/openssl.cnf
-HOME			= /root/ca/
-RANDFILE		= $ENV::HOME/ca/.rnd
+HOME			= /root/certs/
+RANDFILE		= $ENV::HOME/certs/.rnd
 oid_section		= new_oids
 
 [ new_oids ]
 
 ####################################################################
 [ ca ]
-default_ca	= mini-stack.maas		# The default ca section
+default_ca	= lxd.mirror.mini-stack.maas		# The default ca section
 
 ####################################################################
-[ mini-stack.maas ]
+[ lxd.mirror.mini-stack.maas ]
 
-dir		= /root/ca/mini-stack.maas/             # Where everything is kept.
+dir		= /root/certs/lxd.mirror.mini-stack.maas/             # Where everything is kept.
 certs		= $dir/issued_certificates		# Where the issued certs are kept.
 crl_dir		= $dir/crl                              # Where the issued crl are kept.
 database	= $dir/index.attr                       # Database index file.
 unique_subject	= no                                    # !Dangerous!
 new_certs_dir	= $dir/issued                           # Default place for new certs.
-certificate	= $dir/root/mini-stack.maas_CA_PubCertificate.crt	# The CA certificate
+certificate	= $dir/root/lxd.mirror.mini-stack.maas_CA_PubCertificate.crt	# The CA certificate
 serial		= $dir/serial                           # The current serial number
 crl		= $dir/root/crl.pem                     # The current CRL
-private_key	= $dir/root/private/mini-stack.maas_CA_PrivateKey.crt   # The private key
+private_key	= $dir/root/private/lxd.mirror.mini-stack.maas_CA_PrivateKey.crt   # The private key
 RANDFILE	= $dir/root/private/.rand               # Private random number file
 x509_extensions	= usr_cert                              # The extentions to add to the cert
 
@@ -81,13 +81,13 @@ output_password = capwd  ## DANGEROUS PWD EXPOSURE | Lab Use Only
  emailAddress			= Email Address
  emailAddress_max		= 64
 
-  0.organizationName_default	= mini-stack.maas
+  0.organizationName_default	= lxd.mirror.mini-stack.maas
   organizationalUnitName_default = MSMAAS_PROXY CertAuthority
   stateOrProvinceName_default	= Hawaii
   localityName_default		= Kamuela
   countryName_default		= US
   commonName_default		= MSMAAS Services
-  emailAddress_default		= admin@mini-stack.maas
+  emailAddress_default		= admin@lxd.mirror.mini-stack.maas
 
 # SET-ex3			= SET extension number 3
 [ req_attributes ]

@@ -1,26 +1,55 @@
 #!/bin/bash
 # SimpleStreams Setup Demo
 #################################################################################
-#IMAGE_SRC=https://images.maas.io/ephemeral-v3/daily/
-IMAGE_SRC=https://cloud-images.ubuntu.com/releases/
-IMAGE_DIR=/var/www/html/cloud-images/
-KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
+# Set Variables
+IMAGE_SRC="https://cloud-images.ubuntu.com/releases/"
+KEYRING_FILE="/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg"
+IMAGE_DIR="/var/www/html/cloud-images/"
+pkg_LIST="ubuntu-cloudimage-keyring simplestreams nginx"
 
-apt install -y ubuntu-cloudimage-keyring simplestreams nginx
+#################################################################################
+# Install Packages
+apt install -y ${pkg_LIST}
 
-ln -f /root/nginx-default /etc/nginx/sites-enabled/default
+#################################################################################
+# Install NGINX Default Config
+wget -O /etc/nginx/sites-enabled/default https://gitlab.com/kat.morgan/simple-streams-mirror-build/raw/master/lxd/aux/nginx/default
 
+#################################################################################
+# Create SSL Certificates
+wget -O /root/certs/openssl.cnf https://gitlab.com/kat.morgan/simple-streams-mirror-build/raw/master/lxd/aux/ca/openssl.cnf
+wget -O /root/certs/init-pki https://gitlab.com/kat.morgan/simple-streams-mirror-build/raw/master/lxd/aux/ca/init-pki
+chmod +x /root/certs/init-pki && . /root/certs/init-pki
+
+#################################################################################
+# Create Image Directory
 [[ -d ${IMAGE_DIR} ]] || mkdir -p ${IMAGE_DIR}
 
-cat <<EOF > /etc/nginx/sites-enabled/default
-location /maas {
-  autoindex on;
-}
-EOF
-
+#################################################################################
+# Restart nginx
 sudo systemctl restart nginx.service
 
-sudo sstream-mirror https://images.linuxcontainers.org/streams/v1/index.json ${IMAGE_DIR} 'arch=amd64' 'os=Alpine'
+#################################################################################
+echo "
 
-#sudo sstream-mirror --keyring=$KEYRING_FILE $IMAGE_SRC $IMAGE_DIR 'arch=amd64' 'release~(precise|trusty|xenial|bionic|cosmic)' --max=1 --progress
+  This SimpleStreams mirror is ready to sync images.
+
+  For example run:
+
+sudo sstream-mirror \
+    --keyring=$KEYRING_FILE \
+    $IMAGE_SRC \
+    $IMAGE_DIR \
+    'arch=amd64' \
+    'release~(trusty|xenial|bionic)' \
+    --max=1 --progress
+
+"
+
+#################################################################################
+# REFRENCE
+#    IMAGE_SRC=https://images.maas.io/ephemeral-v3/daily/
+#    IMAGE_SRC=https://images.maas.io/streams/v1/index.json
+#    sudo sstream-mirror --keyring=$KEYRING_FILE $IMAGE_SRC $IMAGE_DIR 'arch=amd64' 'release~(precise|trusty|xenial|bionic|cosmic)' --max=1 --progress
+#    sudo sstream-mirror https://images.linuxcontainers.org/streams/v1/index.json ${IMAGE_DIR} 'arch=amd64' 'os=Alpine'
 
