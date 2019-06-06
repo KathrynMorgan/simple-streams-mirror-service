@@ -8,9 +8,9 @@ KEYRING_FILE=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg
 
 apt install -y ubuntu-cloudimage-keyring simplestreams nginx
 
-ln -f /root/nginx-default /etc/nginx/sites-enabled/default
-
 [[ -d ${IMAGE_DIR} ]] || mkdir -p ${IMAGE_DIR}
+
+sudo sstream-mirror --keyring=$KEYRING_FILE $IMAGE_SRC $IMAGE_DIR 'arch=amd64' 'release~(precise|trusty|xenial|bionic|cosmic)' --max=1 --progress
 
 cat <<EOF > /etc/nginx/sites-enabled/default
 location /maas {
@@ -19,8 +19,3 @@ location /maas {
 EOF
 
 sudo systemctl restart nginx.service
-
-sudo sstream-mirror https://images.linuxcontainers.org/streams/v1/index.json ${IMAGE_DIR} 'arch=amd64' 'os=Alpine'
-
-#sudo sstream-mirror --keyring=$KEYRING_FILE $IMAGE_SRC $IMAGE_DIR 'arch=amd64' 'release~(precise|trusty|xenial|bionic|cosmic)' --max=1 --progress
-
